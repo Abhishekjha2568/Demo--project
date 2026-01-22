@@ -7,17 +7,25 @@ const app = express();
 
 
 app.use(express.json());
-app.use(cors());
+
+
+app.use(cors({
+    origin: [
+        "http://localhost:3000",
+        "https://demo-project-frontend-5t0jr4ka-abhishekjha2568s-projects.vercel.app"
+    ],
+    credentials: true
+}));
 
 
 const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI)
     .then(() => {
-        console.log(" MongoDB connected successfully."); 
+        console.log("MongoDB connected successfully.");
     })
     .catch((err) => {
-        console.error(" Database connection error:", err.message); 
+        console.error("Database connection error:", err.message);
     });
 
 
