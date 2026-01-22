@@ -8,31 +8,31 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "https://demo-project-frontend-5t0jr4ka-abhishekjha2568s-projects.vercel.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
+  origin: '*',
 }));
 
-// 🔴 THIS LINE IS MUST (preflight fix)
-app.options("*", cors());
+// ✅ SAFETY CHECK
+if (!process.env.MONGO_URI) {
+  console.error("❌ MONGO_URI missing");
+  process.exit(1);
+}
 
-const mongoURI = process.env.MONGO_URI;
-
-mongoose.connect(mongoURI)
-    .then(() => console.log("MongoDB connected successfully."))
-    .catch((err) => console.error("Database connection error:", err.message));
+// MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => {
+    console.error("❌ Mongo error:", err.message);
+    process.exit(1);
+  });
 
 app.use('/api/auth', require('./routes/auth'));
 
 app.get('/', (req, res) => {
-    res.status(200).send("HR Portal Backend Server is running...");
+  res.send("Backend running OK");
 });
 
+// ✅ RAILWAY SAFE PORT
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is operational on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
