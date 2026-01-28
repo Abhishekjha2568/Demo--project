@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const { sendOTP } = require('../utils/mailer');
 
-// ================= SIGNUP =================
+
 router.post('/signup', async (req, res) => {
     try {
         const { name, email, password, college, city } = req.body;
@@ -38,7 +38,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-// ================= VERIFY OTP =================
+
 router.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -64,7 +64,7 @@ router.post('/verify-otp', async (req, res) => {
     }
 });
 
-// ================= LOGIN =================
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;

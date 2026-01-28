@@ -11,17 +11,17 @@ app.use(cors({
   origin: '*',
 }));
 
-// ✅ SAFETY CHECK
+
 if (!process.env.MONGO_URI) {
-  console.error("❌ MONGO_URI missing");
+  console.error(" MONGO_URI missing");
   process.exit(1);
 }
 
-// MongoDB
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(() => console.log(" MongoDB connected"))
   .catch((err) => {
-    console.error("❌ Mongo error:", err.message);
+    console.error(" Mongo error:", err.message);
     process.exit(1);
   });
 
@@ -31,8 +31,8 @@ app.get('/', (req, res) => {
   res.send("Backend running OK");
 });
 
-// ✅ RAILWAY SAFE PORT
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });
