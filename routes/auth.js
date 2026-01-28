@@ -1,20 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const { sendOTP } = require('../utils/mailer');
+// const { sendOTP } = require('../utils/mailer'); // ❌ TEMPORARILY DISABLED
 
-
+/* =========================
+   SIGNUP ROUTE
+========================= */
 router.post('/signup', async (req, res) => {
     try {
         const { name, email, password, college, city } = req.body;
 
+        // Check existing user
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ msg: "User already registered with this email." });
         }
 
+        // Generate OTP (for logic demo)
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+        // Create user (AUTO VERIFIED FOR DEMO)
         user = new User({
             name,
             email,
@@ -22,23 +27,30 @@ router.post('/signup', async (req, res) => {
             college,
             city,
             otp,
-            isVerified: false
+            isVerified: true   // ✅ AUTO VERIFIED (NO EMAIL NEEDED)
         });
 
         await user.save();
-        await sendOTP(email, otp);
 
-        res.status(200).json({
-            msg: "Registration successful. Please check your email for OTP."
+        // ❌ Email sending disabled due to Railway SMTP timeout
+        // await sendOTP(email, otp);
+
+        console.log("OTP generated (demo only):", otp);
+
+        return res.status(200).json({
+            msg: "Registration successful."
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Server error" });
+        console.error("Signup Error:", error);
+        return res.status(500).json({ msg: "Server error" });
     }
 });
 
-
+/* =========================
+   VERIFY OTP ROUTE
+   (KEPT FOR EXPLANATION)
+========================= */
 router.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -56,15 +68,17 @@ router.post('/verify-otp', async (req, res) => {
         user.otp = null;
         await user.save();
 
-        res.status(200).json({ msg: "Account verified successfully!" });
+        return res.status(200).json({ msg: "Account verified successfully!" });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Server error" });
+        console.error("Verify OTP Error:", error);
+        return res.status(500).json({ msg: "Server error" });
     }
 });
 
-
+/* =========================
+   LOGIN ROUTE
+========================= */
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -82,7 +96,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ msg: "Invalid credentials." });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             msg: "Login successful!",
             user: {
                 name: user.name,
@@ -93,8 +107,8 @@ router.post('/login', async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Server error" });
+        console.error("Login Error:", error);
+        return res.status(500).json({ msg: "Server error" });
     }
 });
 
